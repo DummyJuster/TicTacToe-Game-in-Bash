@@ -24,15 +24,27 @@ set(){
 }
 
 print(){
-  echo "r\c 0 1 2"
-  echo "0   ${Arr[0]} ${Arr[1]} ${Arr[2]}"
-  echo "1   ${Arr[3]} ${Arr[4]} ${Arr[5]}"
-  echo "2   ${Arr[6]} ${Arr[7]} ${Arr[8]}"
+  echo "c\r 0 1 2"
+  echo "0   ${Arr[0]} ${Arr[3]} ${Arr[6]}"
+  echo "1   ${Arr[1]} ${Arr[4]} ${Arr[7]}"
+  echo "2   ${Arr[2]} ${Arr[5]} ${Arr[8]}"
 }
 
 checkmatch(){
   if [ ${Arr[$1]} != "." ] && [ ${Arr[$1]} == ${Arr[$2]} ] && [ ${Arr[$2]} == ${Arr[$3]} ]; then
     gamestatus=0
+  fi
+  counter=0
+  flag=0
+    echo "${counter}"
+  while [ $counter -gt 9 ]; do
+    if [ ${Arr[${counter}]} == "." ]; then
+      flag=1
+    fi
+    counter=$counter+1
+  done
+  if [ $flag -eq 0 ]; then
+    gamestatus=2
   fi
 }
 
@@ -52,8 +64,11 @@ reset
  # infinit game loop
 while [ 1 == 1 ]; do
   echo ""
-  if [ $player == 1 ]; then sym=O
-  else sym=X; fi
+  if [ $player == 1 ]; then 
+    sym=O
+  else 
+    sym=X; 
+  fi
   echo "Player $player's turn: ($sym)"
   print
   echo ""
@@ -63,13 +78,13 @@ while [ 1 == 1 ]; do
   while [ 1 == 1 ]; do
     read -r cmd a b
     if [ $cmd == "set" ]; then
-  	set $a $b $sym
-	break
+  	  set $a $b $sym
+	    break
     elif [ $cmd == "restart" ]; then
-	reset
-	break
+	    reset
+	    break
     else
-	echo "wrong command, try again."
+	    echo "wrong command, try again."
     fi
   done
   checkgame
@@ -80,10 +95,21 @@ while [ 1 == 1 ]; do
     while [ 1 == 1 ]; do
     	read -r cmd n
     	if [ $cmd == "restart" ]; then
-	  reset
-	  break
+	      reset
+	      break
     	fi
     done
+    if [ $gamestatus == 2 ]; then
+      echo "Fucking Draw !"
+      while [ 1 == 1 ]; do
+    	  read -r cmd n
+    	  if [ $cmd == "restart" ]; then
+	        reset
+	        break
+    	  fi
+      done
+    fi
   fi
+  
 done
 
